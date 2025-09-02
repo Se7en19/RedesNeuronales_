@@ -18,7 +18,7 @@ import numpy as np
 
 class Network(object):
 
-    def __init__(self, sizes):
+    def __init__(self, sizes, optimizer='momentum', eta=3.0, beta=0.9, beta2=0.99, epsilon=1e-16):
         """The list ``sizes`` contains the number of neurons in the
         respective layers of the network.  For example, if the list
         was [2, 3, 1] then it would be a three-layer network, with the
@@ -34,6 +34,15 @@ class Network(object):
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
+
+        # Configuración del optimizador
+        self.optimizer = optimizer.lower()
+        self.learning_rate = eta
+        self.beta = beta          # momentum 
+
+        # Estados para optimizadores (inicializados a cero)
+        self.vel_b = [np.zeros(b.shape) for b in self.biases]  # momentum m 
+        self.vel_w = [np.zeros(w.shape) for w in self.weights]
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
@@ -71,20 +80,36 @@ class Network(object):
                 print("Epoch {0} complete".format(j))
 
     def update_mini_batch(self, mini_batch, eta):
-        """Update the network's weights and biases by applying
-        gradient descent using backpropagation to a single mini batch.
-        The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
-        is the learning rate."""
+        """Update weights and biases using the chosen optimizer on one mini-batch.
+        ``mini_batch`` is a list of (x, y). ``eta`` overrides the learning rate if provided."""
+        lr = eta if eta is not None else self.learning_rate
+        batch_size = float(len(mini_batch))
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         for x, y in mini_batch:
             delta_nabla_b, delta_nabla_w = self.backprop(x, y)
-            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
-            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
-        self.weights = [w-(eta/len(mini_batch))*nw
-                        for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b-(eta/len(mini_batch))*nb
-                       for b, nb in zip(self.biases, nabla_b)]
+            nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+            nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+
+        # Promedio del gradiente por mini-batch
+        grad_b = [nb / batch_size for nb in nabla_b]
+        grad_w = [nw / batch_size for nw in nabla_w]
+
+        if self.optimizer == 'sgd':
+            # SGD estándar
+            self.weights = [w - lr * gw for w, gw in zip(self.weights, grad_w)]
+            self.biases = [b - lr * gb for b, gb in zip(self.biases, grad_b)]
+
+        elif self.optimizer == 'momentum':
+            # Momentum clásico: v = beta*v - lr*grad; w += v
+            self.vel_w = [self.beta * vw - lr * gw for vw, gw in zip(self.vel_w, grad_w)]
+            self.vel_b = [self.beta * vb - lr * gb for vb, gb in zip(self.vel_b, grad_b)]
+            self.weights = [w + vw for w, vw in zip(self.weights, self.vel_w)]
+            self.biases = [b + vb for b, vb in zip(self.biases, self.vel_b)]
+        else:
+            # Fallback a SGD si el optimizador no se reconoce
+            self.weights = [w - lr * gw for w, gw in zip(self.weights, grad_w)]
+            self.biases = [b - lr * gb for b, gb in zip(self.biases, grad_b)]
 
     def backprop(self, x, y):
         """Return a tuple ``(nabla_b, nabla_w)`` representing the
