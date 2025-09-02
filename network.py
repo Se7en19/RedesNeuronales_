@@ -102,7 +102,7 @@ class Network(object):
             zs.append(z)
             activation = sigmoid(z)
             activations.append(activation)
-        # backward pass (cross-entropy + sigmoid en la salida)
+        """ backward pass (cross-entropy + sigmoid en la salida)"""
         delta = activations[-1] - y
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
