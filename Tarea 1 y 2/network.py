@@ -80,8 +80,8 @@ class Network(object):
                 print("Epoch {0} complete".format(j))
 
     def update_mini_batch(self, mini_batch, eta):
-        """Update weights and biases using the chosen optimizer on one mini-batch.
-        ``mini_batch`` is a list of (x, y). ``eta`` overrides the learning rate if provided."""
+        # Actualizamos los pesos y los sesgos usando el optimizador seleccionado
+        """``mini_batch`` is a list of (x, y). ``eta`` overrides the learning rate if provided."""
         lr = eta if eta is not None else self.learning_rate
         batch_size = float(len(mini_batch))
         nabla_b = [np.zeros(b.shape) for b in self.biases]
