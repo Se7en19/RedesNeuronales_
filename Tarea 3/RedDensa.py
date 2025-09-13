@@ -19,6 +19,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.python.distribute.values import SyncOnReadVariable
 
+""" Inicializamos WandB """
+
+import wandb
+from wandb.integration.keras import WandbMetricsLogger
+
+wandb.login()
+
+
 """ Variables iniciales """
 learning_rate = 3.0
 epochs = 30
@@ -41,21 +49,33 @@ X_testv /= 255
 
 """ Codificamos los datos de salida"""
 num_clases = 10
-y_trainc = keras.utils.to_categorical(y_train, num_clases)
-y_testc = keras.utils.to_categorical(y_test, num_clases)
+y_trainc = keras.utils.to_categorical(y_train, 
+                                      num_clases)
+y_testc = keras.utils.to_categorical(y_test, 
+                                     num_clases)
 
 """ Creamos la red neuronal"""
 model = Sequential()
+
 # Agregamos la capa densa
-model.add(Dense(30,activation='sigmoid', input_shape=(784,)))
+model.add(Dense(30,
+                activation='sigmoid', 
+                input_shape=(784,)))
+
 # Agregamos la capa de salida
-model.add(Dense(num_clases, activation='sigmoid'))
+model.add(Dense(num_clases, 
+                activation='sigmoid'))
+
 # Resumen de la red
 model.summary()
-
+print('\n')
+print('\n')
 """ Compilamos la red """
-model.compile(loss='mean_squared_error', optimizer=SGD(learning_rate=learning_rate), metrics = ['accuracy'])
-
+model.compile(loss='mean_squared_error', 
+             optimizer=SGD(learning_rate=learning_rate),
+             metrics = ['accuracy'])
+print('\n')
+print('\n')
 """ Entrenamos la red """
 history = model.fit(
                 X_trainv,
@@ -65,10 +85,14 @@ history = model.fit(
                 verbose=1,
                 validation_data=(X_testv, y_testc)
 )
+print('\n')
+print('\n')
 
 score = model.evaluate(X_testv, y_testc, verbose=1)
 print('Test score:', score[0])
 print('Test accuracy:', score[1])
 a = model.predict(X_testv)
-print("Resultado de la red: ",a[1])
-print("Resultado verdadero: ",y_testc[1])
+print(f"Resultado de la red: {a[1]}")
+print(f"Resultado verdadero: {y_testc[1]}")
+
+"""  """
