@@ -38,7 +38,7 @@ batch_size = 10 -> 60
 optimizer = SGD -> RMSprop
 neu_densa = 30 -> 100
 
-funcion de costo = mean_squared_error -> 'binary_crossentropy'
+funcion de costo = mean_squared_error -> 'categorical_crossentropy'
 
 """
 
@@ -59,8 +59,8 @@ wandb.init(
             "learning_rate": learning_rate,
             "epoch": epochs,
             "batch_size": batch_size,
-            "loss_function": 'binary_crossentropy',
-            "optimizer":RMSprop(learning_rate=learning_rate),
+            "loss_function": 'categorical_crossentropy',
+            "optimizer": "RMSprop",  # Solo el nombre del optimizador
             "metrics": ["accuracy"],
             "N_entra": neu_entra,
             "N_densa": neu_densa
@@ -103,15 +103,23 @@ model.add(Dense(config.N_densa,
 
 # Agregamos la capa de salida
 model.add(Dense(num_clases, 
-                activation='sigmoid'))
+                activation='softmax'))  # Cambiado a softmax para categorical_crossentropy
 
 # Resumen de la red
 model.summary()
 print('\n')
 print('\n')
 """ Compilamos la red """
+# Crear el optimizador basado en la configuración
+if config.optimizer == "RMSprop":
+    optimizer = RMSprop(learning_rate=config.learning_rate)
+elif config.optimizer == "SGD":
+    optimizer = SGD(learning_rate=config.learning_rate)
+else:
+    optimizer = RMSprop(learning_rate=config.learning_rate)  # Por defecto
+
 model.compile(loss=config.loss_function, 
-             optimizer=config.optimizer,
+             optimizer=optimizer,
              metrics = config.metrics
              )
 print('\n')
