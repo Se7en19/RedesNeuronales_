@@ -30,19 +30,15 @@ wandb.login()
 
 """
 
-Esta primera prueba es una replica de la red Network.py
-utilizando Keras, en principio la red Network.py tiene
-como parametros:
+EXPERIMENTO 1
 
-Learning_rate = 3.0
-Epochs = 30
-Batch_size = 10
-Neuronas en la capa de entrada = 784
-Neuronas en la capa densa = 30
+En este primer experimento los parametros a modificar serán:
 
-y utiliza como optimizador Stochastic Gradient Descent (SGD)
+batch_size = 10 -> 60
+optimizer = SGD -> RMSprop
+neu_densa = 30 -> 100
 
-Esta prueba no contiene regularizacion.
+funcion de costo = mean_squared_error -> 'binary_crossentropy'
 
 """
 
@@ -50,9 +46,9 @@ Esta prueba no contiene regularizacion.
 """ Variables iniciales """
 learning_rate = 3.0
 epochs = 30
-batch_size = 10
+batch_size = 60
 neu_entra = 784 # Numero de neuronas en la capa de entrada
-neu_densa = 30 # Numero de neuronas en la capa densa 
+neu_densa = 100 # Numero de neuronas en la capa densa 
 
 
 
@@ -63,8 +59,8 @@ wandb.init(
             "learning_rate": learning_rate,
             "epoch": epochs,
             "batch_size": batch_size,
-            "loss_function": "mean_squared_error",
-            "optimizer": "SGD",
+            "loss_function": 'binary_crossentropy',
+            "optimizer": keras.optimizers.RMSprop(learning_rate=learning_rate),
             "metrics": ["accuracy"],
             "N_entra": neu_entra,
             "N_densa": neu_densa
@@ -115,7 +111,7 @@ print('\n')
 print('\n')
 """ Compilamos la red """
 model.compile(loss=config.loss_function, 
-             optimizer=SGD(learning_rate=config.learning_rate),
+             optimizer=config.optimizer,
              metrics = config.metrics
              )
 print('\n')
