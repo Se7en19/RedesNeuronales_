@@ -105,9 +105,10 @@ y_testc = keras.utils.to_categorical(y_test,
 """ Creamos la red neuronal"""
 model = Sequential()
 
-# Agregamos la capa densa
+# Agregamos la capa densa con regularización L1L2
 model.add(Dense(config.N_densa,
-                activation='sigmoid', 
+                activation='sigmoid',
+                kernel_regularizer=regularizers.l1_l2(l1=config.l1_l2_l1, l2=config.l1_l2_l2),
                 input_shape=(config.N_entra,)
                 ))
 
