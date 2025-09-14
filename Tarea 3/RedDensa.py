@@ -9,6 +9,7 @@ utilizando las librerias de keras.
 
 ''' Importar librerias '''
 from calendar import EPOCH
+from keras.engine import keras_tensor
 import tensorflow as tf 
 from tensorflow import keras
 from tensorflow.keras.datasets import mnist
@@ -30,7 +31,7 @@ wandb.login()
 
 """
 
-EXPERIMENTO 3
+EXPERIMENTO 3 con regularización L1
 
 En este tercer experimento los parametros a modificar serán:
 
@@ -48,7 +49,8 @@ epochs = 30
 batch_size = 120
 neu_entra = 784 # Numero de neuronas en la capa de entrada
 neu_densa = 512 # Numero de neuronas en la capa densa 
-
+l1 = 0.01 # Regularizador L1
+l2 = 0.01
 
 
 
@@ -62,7 +64,8 @@ wandb.init(
             "optimizer": "SGD",  # Solo el nombre del optimizador
             "metrics": ["accuracy"],
             "N_entra": neu_entra,
-            "N_densa": neu_densa
+            "N_densa": neu_densa,
+            "l1": l1
         }
     )
 
@@ -98,11 +101,13 @@ model = Sequential()
 # Agregamos la capa densa
 model.add(Dense(config.N_densa,
                 activation='sigmoid', 
-                input_shape=(config.N_entra,)))
+                input_shape=(config.N_entra,),
+                kernel_regularizer=regularizers.l1(config.l1)))
 
 # Agregamos la capa de salida
 model.add(Dense(num_clases, 
-                activation='softmax'))  # Cambiado a softmax para categorical_crossentropy
+                activation='softmax',
+                kernel_regularizer=regularizers.l1(config.l1)))
 
 # Resumen de la red
 model.summary()
