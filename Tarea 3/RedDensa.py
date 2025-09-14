@@ -60,7 +60,7 @@ wandb.init(
             "epoch": epochs,
             "batch_size": batch_size,
             "loss_function": 'binary_crossentropy',
-            "optimizer": keras.optimizers.RMSprop(learning_rate=learning_rate),
+            "optimizer":RMSprop(learning_rate=learning_rate),
             "metrics": ["accuracy"],
             "N_entra": neu_entra,
             "N_densa": neu_densa
