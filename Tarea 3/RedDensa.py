@@ -34,9 +34,9 @@ EXPERIMENTO 2
 
 En este primer experimento los parametros a modificar serán:
 
-batch_size = 10 -> 120
+batch_size = 60 -> 120
 optimizer = RMSprop -> Adam
-neu_densa = 30 -> 512
+neu_densa = 100 -> 512
 
 funcion de costo = categorical_crossentropy -> binary_crossentropy
 """
@@ -47,11 +47,11 @@ learning_rate = 3.0
 epochs = 30
 batch_size = 60
 neu_entra = 784 # Numero de neuronas en la capa de entrada
-neu_densa = 100 # Numero de neuronas en la capa densa 
+neu_densa = 512 # Numero de neuronas en la capa densa 
 
 
 
-# Initialize WandB with error handling
+
 wandb.init(
         project = 'Red-Densa-MNIST-Tarea_3',
         config={
@@ -59,7 +59,7 @@ wandb.init(
             "epoch": epochs,
             "batch_size": batch_size,
             "loss_function": 'categorical_crossentropy',
-            "optimizer": "RMSprop",  # Solo el nombre del optimizador
+            "optimizer": "Adam",  # Solo el nombre del optimizador
             "metrics": ["accuracy"],
             "N_entra": neu_entra,
             "N_densa": neu_densa
@@ -114,6 +114,8 @@ if config.optimizer == "RMSprop":
     optimizer = RMSprop(learning_rate=config.learning_rate)
 elif config.optimizer == "SGD":
     optimizer = SGD(learning_rate=config.learning_rate)
+elif config.optimizer == "Adam":
+    optimizer = Adam(learning_rate=config.learning_rate)
 else:
     optimizer = RMSprop(learning_rate=config.learning_rate)  # Por defecto
 
