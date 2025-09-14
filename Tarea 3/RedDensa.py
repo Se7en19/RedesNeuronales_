@@ -50,7 +50,7 @@ batch_size = 120
 neu_entra = 784 # Numero de neuronas en la capa de entrada
 neu_densa = 512 # Numero de neuronas en la capa densa 
 l1 = 0.01 # Regularizador L1
-l2 = 0.01
+l2 = 0.01 # Regularizador L2
 
 
 
@@ -102,12 +102,12 @@ model = Sequential()
 model.add(Dense(config.N_densa,
                 activation='sigmoid', 
                 input_shape=(config.N_entra,),
-                kernel_regularizer=regularizers.l1(config.l1)))
+                kernel_regularizer=regularizers.l2(config.l2)))
 
 # Agregamos la capa de salida
 model.add(Dense(num_clases, 
                 activation='softmax',
-                kernel_regularizer=regularizers.l1(config.l1)))
+                kernel_regularizer=regularizers.l2(config.l2)))
 
 # Resumen de la red
 model.summary()
