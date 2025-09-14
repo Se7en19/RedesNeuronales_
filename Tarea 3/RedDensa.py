@@ -30,15 +30,15 @@ wandb.login()
 
 """
 
-EXPERIMENTO 2
+EXPERIMENTO 3
 
-En este primer experimento los parametros a modificar serán:
+En este tercer experimento los parametros a modificar serán:
 
 batch_size = 60 -> 120
-optimizer = RMSprop -> Adam
+optimizer = RMSprop -> SGD
 neu_densa = 100 -> 512
 
-funcion de costo = categorical_crossentropy -> binary_crossentropy
+funcion de costo = binary_crossentropy -> mean_squared_error 
 """
 
 
@@ -58,8 +58,8 @@ wandb.init(
             "learning_rate": learning_rate,
             "epoch": epochs,
             "batch_size": batch_size,
-            "loss_function": 'categorical_crossentropy',
-            "optimizer": "Adam",  # Solo el nombre del optimizador
+            "loss_function": 'mean_squared_error',
+            "optimizer": "SGD",  # Solo el nombre del optimizador
             "metrics": ["accuracy"],
             "N_entra": neu_entra,
             "N_densa": neu_densa
