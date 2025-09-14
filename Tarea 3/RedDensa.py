@@ -65,7 +65,8 @@ wandb.init(
             "metrics": ["accuracy"],
             "N_entra": neu_entra,
             "N_densa": neu_densa,
-            "l1": l1
+            "l1": l1,
+            "l2": l2
         }
     )
 
