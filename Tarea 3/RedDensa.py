@@ -14,7 +14,7 @@ from tensorflow import keras
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Activation
-from tensorflow.keras.optimizers import RMSprop, SGD
+from tensorflow.keras.optimizers import RMSprop, SGD, Adam
 from tensorflow.keras import regularizers
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,16 +30,15 @@ wandb.login()
 
 """
 
-EXPERIMENTO 1
+EXPERIMENTO 2
 
 En este primer experimento los parametros a modificar serán:
 
-batch_size = 10 -> 60
-optimizer = SGD -> RMSprop
-neu_densa = 30 -> 100
+batch_size = 10 -> 120
+optimizer = RMSprop -> Adam
+neu_densa = 30 -> 512
 
-funcion de costo = mean_squared_error -> 'categorical_crossentropy'
-
+funcion de costo = categorical_crossentropy -> binary_crossentropy
 """
 
 
