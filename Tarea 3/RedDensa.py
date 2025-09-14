@@ -1,3 +1,4 @@
+
 """
 
 Esta tarea es para entrenar una red neuronal con una capa densa
@@ -19,18 +20,60 @@ import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow.python.distribute.values import SyncOnReadVariable
 
+
+
 """ Inicializamos WandB """
 
 import wandb
-from wandb.integration.keras import WandbMetricsLogger
-
+from wandb.integration.keras import WandbMetricsLogger,WandbModelCheckpoint
 wandb.login()
+
+"""
+
+Esta primera prueba es una replica de la red Network.py
+utilizando Keras, en principio la red Network.py tiene
+como parametros:
+
+Learning_rate = 3.0
+Epochs = 30
+Batch_size = 10
+Neuronas en la capa de entrada = 784
+Neuronas en la capa densa = 30
+
+y utiliza como optimizador Stochastic Gradient Descent (SGD)
+
+Esta prueba no contiene regularizacion.
+
+"""
 
 
 """ Variables iniciales """
 learning_rate = 3.0
 epochs = 30
 batch_size = 10
+neu_entra = 784 # Numero de neuronas en la capa de entrada
+neu_densa = 30 # Numero de neuronas en la capa densa 
+
+
+
+# Initialize WandB with error handling
+wandb.init(
+        project = 'Red-Densa-MNIST-Tarea_3',
+        config={
+            "learning_rate": learning_rate,
+            "epoch": epochs,
+            "batch_size": batch_size,
+            "loss_function": "mean_squared_error",
+            "optimizer": "SGD",
+            "metrics": ["accuracy"],
+            "N_entra": neu_entra,
+            "N_densa": neu_densa
+        }
+    )
+
+
+config = wandb.config 
+
 
 """ Cargar los datos """
 dataset = mnist.load_data()
@@ -58,9 +101,9 @@ y_testc = keras.utils.to_categorical(y_test,
 model = Sequential()
 
 # Agregamos la capa densa
-model.add(Dense(30,
+model.add(Dense(config.N_densa,
                 activation='sigmoid', 
-                input_shape=(784,)))
+                input_shape=(config.N_entra,)))
 
 # Agregamos la capa de salida
 model.add(Dense(num_clases, 
@@ -71,19 +114,24 @@ model.summary()
 print('\n')
 print('\n')
 """ Compilamos la red """
-model.compile(loss='mean_squared_error', 
-             optimizer=SGD(learning_rate=learning_rate),
-             metrics = ['accuracy'])
+model.compile(loss=config.loss_function, 
+             optimizer=SGD(learning_rate=config.learning_rate),
+             metrics = config.metrics
+             )
 print('\n')
 print('\n')
 """ Entrenamos la red """
 history = model.fit(
                 X_trainv,
                 y_trainc,
-                batch_size=batch_size,
-                epochs=epochs,
+                batch_size=config.batch_size,
+                epochs=config.epoch,
                 verbose=1,
-                validation_data=(X_testv, y_testc)
+                validation_data=(X_testv, y_testc),
+                callbacks=[
+                      WandbMetricsLogger(log_freq=5)
+                      # WandbModelCheckpoint("models")  # Comentado para evitar apertura de ventanas
+                    ]
 )
 print('\n')
 print('\n')
@@ -95,4 +143,3 @@ a = model.predict(X_testv)
 print(f"Resultado de la red: {a[1]}")
 print(f"Resultado verdadero: {y_testc[1]}")
 
-"""  """
