@@ -45,7 +45,7 @@ funcion de costo = categorical_crossentropy -> binary_crossentropy
 """ Variables iniciales """
 learning_rate = 3.0
 epochs = 30
-batch_size = 60
+batch_size = 120
 neu_entra = 784 # Numero de neuronas en la capa de entrada
 neu_densa = 512 # Numero de neuronas en la capa densa 
 
